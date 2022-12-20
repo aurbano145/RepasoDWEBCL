@@ -3,83 +3,72 @@ class Calculator {
     btnMinus = document.getElementById("btn1Minus");
     btnEqual = document.getElementById("btnEqual");
     screen = document.getElementById("screen");
- 
-    num = "";
+
+    num1 = "";
+    num2 = "";
     symbol = "";
-    result = "";
-    oldResult = "";
+    turn = false;
 
     numberGetter(key) {
+        if(!this.turn) {
+            this.num1 += key;
+        } else {
+            this.num2 += key;
+        }
+        
         this.screen.innerHTML += key;
-        this.num += key;
     }
 
     delete() {
-        this.num = "";
+        this.num1 = "";
+        this.num2 = "";
         this.symbol = "";
-        this.result = "";
-        this.oldResult = "";
+        this.turn = false;
 
         this.screen.innerHTML = "";
     }
 
     addition() {
-        if(this.num == "") {
-            if(this.oldResult.length > 0) {
-                this.symbol = "+";
-                this.result = this.oldResult;
-                 
-                this.screen.innerHTML = this.result + " " + this.symbol + " ";
-            } else {
-                console.log("There is no number");
-            }
-        } else if(this.num.length > 0) {
+        if(!this.turn) {
             this.symbol = "+";
-            this.result = this.num;
-            
-            this.screen.innerHTML = this.result + " " + this.symbol + " ";
-
-            this.result = this.num;
-            this.num = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
+            this.turn = true;
+        } else {
+            this.num1 = (parseInt(this.num1) + parseInt(this.num2)).toString();
+            this.symbol = "+";
+            this.num2 = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
         }
     }
 
     substraction() {
-        if(this.num == "") {
-            if(this.oldResult.length > 0) {
-                this.symbol = "-";
-                this.result = this.oldResult;
-
-                this.screen.innerHTML = this.result + " " + this.symbol + " ";
-            } else {
-                console.log("There is no number");
-            }
-        } else if(this.num.length > 0) {
+        if(!this.turn) {
             this.symbol = "-";
-            this.result = this.num;
-            
-            this.screen.innerHTML = this.result + " " + this.symbol + " ";
-
-            this.result = this.num;
-            this.num = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
+            this.turn = true;
+        } else {
+            this.num1 = (parseInt(this.num1) - parseInt(this.num2)).toString();
+            this.symbol = "-";
+            this.num2 = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
         }
     }
 
     equality() {
-        if(this.symbol == "+") {
-            this.result = parseInt(this.result) + parseInt(this.num);
-        } else if(this.symbol == "-") {
-            this.result = parseInt(this.result) - parseInt(this.num);
+        if(this.turn && this.num2 != "") {
+            if(this.symbol == "+") {
+                this.num1 = (parseInt(this.num1) + parseInt(this.num2)).toString();
+            } else if(this.symbol == "-") {
+                this.num1 = (parseInt(this.num1) - parseInt(this.num2)).toString();
+            }
+        } else {
+            console.log("Enter a value");
         }
 
-        this.screen.innerHTML = this.result;
-        this.oldResult = this.result.toString();
-        this.num = "";
-        this.result = "";
-
-        console.log(this.oldResult);
-        console.log(this.num);
-        console.log(this.result);
+        this.screen.innerHTML = this.num1;
+        this.num2 = "";
+        this.symbol = "";
+        this.turn = false;
     }
 }
 

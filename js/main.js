@@ -4,11 +4,10 @@ var btnDelete = document.getElementById("btnDelete");
 var btnPlus = document.getElementById("btnPlus");
 var btnMinus = document.getElementById("btnMinus");
 var btnEqual = document.getElementById("btnEqual");
-var screen = document.getElementById("screen");
 
 var calculator = new Calculator();
 
-for(let i = 0; i < 10; i++) {
+for(let i = 0; i < 10; i++) {  //Bucle para asignar a cada número su valor correspondiente
     document.getElementById("btn" + i).addEventListener("click", () => {calculator.numberGetter(document.getElementById("btn" + i).innerHTML)});
 }
 
