@@ -5,111 +5,95 @@ class Calculator {
     screen = document.getElementById("screen");
     noRecord = document.getElementById("noRecord");
     recordList = document.getElementById("recordList");
- 
-    num = "";
+
+    num1 = "";
+    num2 = "";
     symbol = "";
-    result = "";
-    oldResult = "";
+    turn = false;
 
-    operationSave = "";
-
-    record = [];
-    recordCounter = 0;
+    recordArray = [];
+    record = "";
+    counter = 0;
 
     numberGetter(key) {
+        if(!this.turn) {
+            this.num1 += key;
+        } else {
+            this.num2 += key;
+        }
+        
         this.screen.innerHTML += key;
-        this.num += key;
     }
 
     delete() {
-        this.num = "";
+        this.num1 = "";
+        this.num2 = "";
         this.symbol = "";
-        this.result = "";
-        this.oldResult = "";
+        this.turn = false;
 
         this.screen.innerHTML = "";
     }
 
     addition() {
-        if(this.num == "") {
-            if(this.oldResult.length > 0) {
-                this.symbol = "+";
-                this.result = this.oldResult;
-                 
-                this.screen.innerHTML = this.result + " " + this.symbol + " ";
-            } else {
-                console.log("There is no number");
-            }
-        } else if(this.num.length > 0) {
+        if(!this.turn) {
             this.symbol = "+";
-            this.result = this.num;
-            
-            this.screen.innerHTML = this.result + " " + this.symbol + " ";
-
-            this.result = this.num;
-            this.num = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
+            this.turn = true;
+        } else {
+            this.saveRecord(this.num1, this.num2, this.symbol);
+            this.num1 = (parseInt(this.num1) + parseInt(this.num2)).toString();
+            this.symbol = "+";
+            this.num2 = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
         }
     }
 
     substraction() {
-        if(this.num == "") {
-            if(this.oldResult.length > 0) {
-                this.symbol = "-";
-                this.result = this.oldResult;
-
-                this.screen.innerHTML = this.result + " " + this.symbol + " ";
-            } else {
-                console.log("There is no number");
-            }
-        } else if(this.num.length > 0) {
+        if(!this.turn) {
             this.symbol = "-";
-            this.result = this.num;
-            
-            this.screen.innerHTML = this.result + " " + this.symbol + " ";
-
-            this.result = this.num;
-            this.num = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
+            this.turn = true;
+        } else {
+            this.saveRecord(this.num1, this.num2, this.symbol);
+            this.num1 = (parseInt(this.num1) - parseInt(this.num2)).toString();
+            this.symbol = "-";
+            this.num2 = "";
+            this.screen.innerHTML = this.num1 + " " + this.symbol + " ";
         }
     }
 
     equality() {
-        if(this.symbol == "+") {
-            this.operationSave = this.result + " " + this.symbol + " " + this.num + " = " + (parseInt(this.result) + parseInt(this.num)).toString();
-            this.result = parseInt(this.result) + parseInt(this.num);
-        } else if(this.symbol == "-") {
-            this.operationSave = this.result + " " + this.symbol + " " + this.num + " = " + (parseInt(this.result) + parseInt(this.num)).toString();
-            this.result = parseInt(this.result) - parseInt(this.num);
-        }
-
-        this.screen.innerHTML = this.result;
-        this.oldResult = this.result.toString();
-        
-        this.num = "";
-        this.result = "";
-
-        this.record.push(this.oldResult);
-
-        this.showRecord();
-        this.recordCounter += 1;
-    }
-
-    insertResult() {
-        if(this.result == "") {
-            this.result = this.record[this.recordCounter];
+        if(this.turn && this.num2 != "") {
+            if(this.symbol == "+") {
+                this.saveRecord(this.num1, this.num2, this.symbol);
+                this.num1 = (parseInt(this.num1) + parseInt(this.num2)).toString();
+            } else if(this.symbol == "-") {
+                this.saveRecord(this.num1, this.num2, this.symbol);
+                this.num1 = (parseInt(this.num1) - parseInt(this.num2)).toString();
+            }
         } else {
-            this.num = this.record[this.recordCounter];
+            console.log("Enter a value");
         }
+
+        this.screen.innerHTML = this.num1;
+        this.num2 = "";
+        this.symbol = "";
+        this.turn = false;
     }
 
-    showRecord() {
-        if(this.record.length > 0) {
-            this.noRecord.style.display = "none";
+    saveRecord(oldnum1, oldnum2, oldsymbol) {
+        this.recordArray.push((parseInt(this.num1) + parseInt(this.num2)).toString());
+        this.record = oldnum1 + " " + oldsymbol + " " + oldnum2 + " = " + (parseInt(oldnum1) + parseInt(oldnum2)).toString();
+        this.recordList.insertAdjacentHTML("beforeend", "<li class='recordElem'><button id='recordBtn" + this.counter + "' value=" + this.recordArray[this.counter] + ">" + this.record + "</button></li>");
 
-            this.recordList.insertAdjacentHTML("beforeend", "<li class='recordElem'>" + this.operationSave + " <button id='re" + this.recordCounter + "'>Insert</button></li>");
+        this.counter += 1;
+    }
 
-            document.getElementById("re" + this.recordCounter).addEventListener("click", () => {insertResult()});
-
-            this.operationSave = "";
+    insertRecord(recordValue) {
+        if(!this.turn) {
+            this.num1 = recordValue.toString();
+        } else {
+            this.num2 = recordValue.toString();
         }
     }
 }
